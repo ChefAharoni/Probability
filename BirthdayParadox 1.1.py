@@ -57,30 +57,17 @@ def bd_ppl_print(bds: dict):
     from datetime import datetime
     listed_bds = list()
     for key, value in bds.items():
-        listed_bds.append({"name": key, "dob": value})  # converting the dict to list of dict for ease of sorting.
-    listed_bds.sort(key=lambda x: datetime.strptime(x['dob'], '%d %B'))
+        listed_bds.append({"Name": key, "DOB": value})  # converting the dict to list of dict for ease of sorting.
+    listed_bds.sort(key=lambda x: datetime.strptime(x['DOB'], '%d %B'))
     print(listed_bds)
     # receives the dict from assign_birthdays func and prints the bds in a tabular, clean format.
-    print(style.Colors.BOLD + style.Colors.BLUE + f'{"Human name":<20} |\t {"Birthday"}' + style.Colors.END)
-    # listed_dates = list(bds.values())  # creates a list from the dates in the dict.
-    # listed_dates.sort(key=lambda date: datetime.strptime(date, '%d %B'))  # sorts with datetime module.
-    for man, bd in bds.items():
-        print(f'{man:<20} |\t {bd:<10}')
-
-
-"""
-from collections import OrderedDict
-from datetime import datetime
-
-
-def sort_dict_by_date(the_dict, date_format):
-    # Python dicts do not hold their ordering so we need to make it an
-    # ordered dict, after sorting.
-    return OrderedDict(reversed(sorted(
-            the_dict.items(),
-            key=lambda x: datetime.strptime(x[0], date_format)
-        )))
-"""
+    print(style.Colors.BOLD + style.Colors.BLUE + f'{"Human name":<20} |\t {"Birthday"}' + style.Colors.END)  # title
+    # for man, bd in bds.items():
+    #     print(f'{man:<20} |\t {bd:<10}')
+    for i in listed_bds:  # for every dict in the ordered listed dictionaries.
+        for v in i.values():  # for every value in a dictionary
+            print(f'{v:<20}', end=" |\t")
+        print()
 
 
 def create_pairs(ppl: set):
