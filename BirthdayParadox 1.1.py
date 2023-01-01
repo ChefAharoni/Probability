@@ -45,7 +45,7 @@ def assign_birthdays(ppl: set):
     for dude in ppl:
         month = random.randint(1, 12)
         if month == 2:  # February
-            day = random.randint(1, 29)
+            day = random.randint(1, 28)
         elif month in [4, 6, 9, 11]:  # if month has 30 days.
             day = random.randint(1, 30)
         else:  # January, March, May
@@ -71,7 +71,7 @@ def bd_ppl_print(bds: dict):
     listed_bds = list()
     for key, value in bds.items():
         listed_bds.append({"Name": key, "DOB": value})  # converting the dict to list of dict for ease of sorting.
-    listed_bds.sort(key=lambda x: datetime.date.strftime(x['DOB'], '%d %B'))  # sorts the list of dicts by date.
+    listed_bds.sort(key=lambda x: datetime.datetime.strptime(x['DOB'], '%d %B'))  # sorts the list of dicts by date.
     print(listed_bds)
     # receives the dict from assign_birthdays func and prints the bds in a tabular, clean format.
     print(style.Colors.BOLD + style.Colors.BLUE + f'{"Human Name":<20} |\t {"Birthday":<20} {"|":<20}' +
@@ -147,7 +147,12 @@ def probability(total_days=365, num_of_ppl=23):
     import math
     n = total_days
     k = num_of_ppl
-    v_nr = (math.factorial(n)) / (math.factorial(n - k))
+    try:
+        v_nr = (math.factorial(n)) / (math.factorial(n - k))
+    except OverflowError:  # If number is too large for python to calculate.
+        return None  # Cannot calculate due to large number.
+    except ValueError:  # factorial() not defined for negative values
+        return None  # Cannot calculate due to negative factorial.
     v_t = n ** k
     p_a = v_nr / v_t
     p_b = 1 - p_a
