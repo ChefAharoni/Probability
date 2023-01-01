@@ -9,9 +9,12 @@ people = [i for i in range(23)]  # change later the people to random names
 
 # print(people)
 def ran_ppl(num_of_ppl: int):
+    """
+    The function receives number of people to run, and selects randomly from the master list.
+    @param num_of_ppl: Number of people to be checked.
+    @return: a list of n people chosen randomly
+    """
     from random import randint
-    # The function receives number of people to run, and selects randomly from the master list.
-    # Returns a list of n people chosen randomly
     chosen_ppl = set()  # The returned set of names randomly chosen.
     random_numbers = list()  # A list to keep track of chosen random numbers
     for i in range(num_of_ppl):
@@ -29,7 +32,11 @@ def ran_ppl(num_of_ppl: int):
 
 
 def assign_birthdays(ppl: set):
-    # Function should assign a random date to each of the 23 people.
+    """
+    Assigns a random date (dob) for each man in people list.
+    @param ppl: List (or set) of people to assign birthdays to.
+    @return: Dict of ppl name as keys and dob as values.
+    """
     import datetime
     import random
     # year, month, day
@@ -37,14 +44,14 @@ def assign_birthdays(ppl: set):
     birthdays = dict()
     for dude in ppl:
         month = random.randint(1, 12)
-        if month == 2:
+        if month == 2:  # February
             day = random.randint(1, 29)
         elif month in [4, 6, 9, 11]:  # if month has 30 days.
             day = random.randint(1, 30)
-        else:
+        else:  # January, March, May
             day = random.randint(1, 31)
         bd = datetime.date(1600, month, day)  # we assume its a leap year for ease of calculation.
-        bd_formatted = datetime.datetime.strftime(bd, "%d %B")  # formats the date to words; outputs str
+        bd_formatted = datetime.date.strftime(bd, "%d %B")  # formats the date to words; outputs str
         # print(bd_formatted)
         # print(type(bd_formatted))
         birthdays[dude] = bd_formatted
@@ -53,24 +60,35 @@ def assign_birthdays(ppl: set):
 
 
 def bd_ppl_print(bds: dict):
+    """
+    Receives a dict of birthdays, converts to list of dicts, sorts the list by date, prints in tabular format name
+    and dob.
+    @param bds: Dictionary of name as key and dob as value.
+    @return: function's purpose is to print; returns None.
+    """
     from Sources import style
-    from datetime import datetime
+    import datetime
     listed_bds = list()
     for key, value in bds.items():
         listed_bds.append({"Name": key, "DOB": value})  # converting the dict to list of dict for ease of sorting.
-    listed_bds.sort(key=lambda x: datetime.strptime(x['DOB'], '%d %B'))
+    listed_bds.sort(key=lambda x: datetime.date.strftime(x['DOB'], '%d %B'))  # sorts the list of dicts by date.
     print(listed_bds)
     # receives the dict from assign_birthdays func and prints the bds in a tabular, clean format.
-    print(style.Colors.BOLD + style.Colors.BLUE + f'{"Human name":<20} |\t {"Birthday"}' + style.Colors.END)  # title
-    # for man, bd in bds.items():
-    #     print(f'{man:<20} |\t {bd:<10}')
+    print(style.Colors.BOLD + style.Colors.BLUE + f'{"Human Name":<20} |\t {"Birthday":<20} {"|":<20}' +
+          style.Colors.END)  # title
     for i in listed_bds:  # for every dict in the ordered listed dictionaries.
         for v in i.values():  # for every value in a dictionary
-            print(f'{v:<20}', end=" |\t")
-        print()
+            print(f'{v:<20}', end=" |\t ")  # prints the name and dob sorted by date, in a tabular format.
+        print()  # prints a newline for formatting
 
 
 def create_pairs(ppl: set):
+    """
+    Function creates pairs of people in ppl list. i.e. for 23 people, the function will pair human 0 with humans 1-23,
+    human 1 with humans 2-23, and so on..
+    @param ppl: Set of people to create pairs from.
+    @return: Dict of people and their pairs.
+    """
     pairs = dict()
     # i_pairs = [i for i in range(1, len(ppl))]  # List comprehension in the size of the ppl list.
     ppl_to_pair = list(ppl)  # convert the ppl set to list, so it could be indexed.
@@ -90,6 +108,15 @@ def create_pairs(ppl: set):
 
 
 def match_bds(bds: dict, pairs: dict):
+    """
+    Finds people with the same dob from dict of pairs.
+    Function wasn't tested if 3 or more people share a dob, probably will not find well since it works with pairs, and
+    it is not the idea behind the birthday paradox.
+    @param bds: Dict of people and their dob (suggested from assign_birthdays func).
+    @param pairs: Dict of people and their pairs (suggested from create_pairs func).
+    @return: Prints results and returns dict of people and their matches; dob as key and list of people sharing the dob
+    in a list.
+    """
     matching_bds = dict()
     for human in pairs.items():
         for pair in human[1]:  # for each pair in the list of the pairs;
@@ -102,6 +129,12 @@ def match_bds(bds: dict, pairs: dict):
 
 
 def successful_pairs(matching_bds: dict, num_of_ppl: int):
+    """
+    If matching birthdays were found, function prints how much were found out of total number of people checked.
+    @param matching_bds: Dict of matching bds (suggested from match_bds func).
+    @param num_of_ppl: Number of people in ppl list (known as n in computations.
+    @return: Currently just prints, might add statistical data in the future.
+    """
     # function should see how many values are in the successful pairs dictionary, and justify the statistics.
     num_results = len(matching_bds.keys())
     if num_results > 0:
