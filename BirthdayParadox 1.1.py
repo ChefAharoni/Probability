@@ -4,6 +4,7 @@
 from Sources import CommonNames
 from colorama import Fore, Back, Style
 from Sources import myStyles
+from datetime import datetime
 
 CMN_NAMES = list(CommonNames.get_csv_names())  # list of all names in commonNames.csv file; contains 447055 names.
 
@@ -12,7 +13,7 @@ CMN_NAMES = list(CommonNames.get_csv_names())  # list of all names in commonName
 
 
 # print(people)
-def ran_ppl(num_of_ppl: int):
+def ran_ppl(num_of_ppl: int) -> set:
     """
     The function receives number of people to run, and selects randomly from the master list.
     @param num_of_ppl: Number of people to be checked.
@@ -35,7 +36,7 @@ def ran_ppl(num_of_ppl: int):
     return chosen_ppl
 
 
-def assign_birthdays(ppl: set):
+def assign_birthdays(ppl: set) -> dict:
     """
     Assigns a random date (dob) for each man in people list.
     @param ppl: List (or set) of people to assign birthdays to.
@@ -63,7 +64,7 @@ def assign_birthdays(ppl: set):
     return birthdays
 
 
-def bd_ppl_print(bds: dict):
+def bd_ppl_print(bds: dict) -> None:
     """
     Receives a dict of birthdays, converts to list of dicts, sorts the list by date, prints in tabular format name
     and dob.
@@ -85,7 +86,7 @@ def bd_ppl_print(bds: dict):
         print()  # prints a newline for formatting
 
 
-def create_pairs(ppl: set):
+def create_pairs(ppl: set) -> dict:
     """
     Function creates pairs of people in ppl list. i.e. for 23 people, the function will pair human 0 with humans 1-23,
     human 1 with humans 2-23, and so on..
@@ -110,7 +111,7 @@ def create_pairs(ppl: set):
     return pairs
 
 
-def match_bds(bds: dict, pairs: dict):
+def match_bds(bds: dict, pairs: dict) -> dict:
     """
     Finds people with the same dob from dict of pairs.
     Function wasn't tested if 3 or more people share a dob, probably will not find well since it works with pairs, and
@@ -137,7 +138,7 @@ def match_bds(bds: dict, pairs: dict):
     return matching_bds
 
 
-def successful_pairs(matching_bds: dict, num_of_ppl: int):
+def successful_pairs(matching_bds: dict, num_of_ppl: int) -> None:
     """
     If matching birthdays were found, function prints how much were found out of total number of people checked.
     @param matching_bds: Dict of matching bds (suggested from match_bds func).
@@ -151,7 +152,7 @@ def successful_pairs(matching_bds: dict, num_of_ppl: int):
     # add statistics data
 
 
-def probability(total_days=365, precision=3, num_of_ppl=23):
+def probability(total_days=365, precision=3, num_of_ppl=23) -> float:
     """
     Function calculates the probability of finding a pair of two people with a birthday.
     @param total_days: Total days in a year, could be a constant, but kept anyway for other future possible options.
@@ -181,22 +182,27 @@ def probability(total_days=365, precision=3, num_of_ppl=23):
     return p_b
 
 
-def num_ppl():
-    num_of_ppl = int(input("Enter the amount of people you'd like to manually enter: "))  # change this
-    while type(num_of_ppl) != int or num_of_ppl <= 0:
+def num_ppl() -> int:
+    # num_of_ppl = int(input("Enter the amount of people you'd like to manually enter: "))  # change this
+    num_of_ppl = int(input("»»» "))  # change this
+    while type(num_of_ppl) != int or num_of_ppl <= 0:  # if num entered isn't int or equal/less than 0.
         num_of_ppl = int(input("Error, please enter a valid number: "))
     return num_of_ppl
 
 
-def choose_name():
+def choose_name() -> str:
+    """
+    Checks and asks for name input from user.
+    @return: Name formatted.
+    """
     # should choose 1 people each time
-    # .
     name = input('Choose human name: ')
+    name = name.lower().title()  # format the name to be lower cased and titled.
     # check input?
     return name
 
 
-def choose_bdd():
+def choose_bdd() -> datetime.date:
     print("Enter the date of birth in DD MMMM format.")
     print("For example, 02 February")
     bdd = input(">>> ")
@@ -204,7 +210,7 @@ def choose_bdd():
     return bdd
 
 
-def choose_people(num_of_ppl: int):
+def choose_people(num_of_ppl: int) -> dict:
     """
     For n people in num_of_ppl chooses name manually from choose_name and bd from choose_bdd.
     @param num_of_ppl: Number of people to run the check.
@@ -218,11 +224,10 @@ def choose_people(num_of_ppl: int):
     return ppl
 
 
-def choose_mode():
+def choose_mode() -> dict:
     """
     Checks with user for his chosen mode of operation for running the program.
-    # @param num_of_ppl: Number of people to be checked, default value set to 23.
-    @return: List of people and bds to perform the birthday pairs check.
+    @return: Dict of people and bds to perform the birthday pairs check.
     """
     print('Please choose code running mode, with a number between 1 and 3.')
     print('1. Auto Mode - the machine chooses random people and assigns random birthdays.')
@@ -243,23 +248,22 @@ def choose_mode():
     elif mode == 2:
         # Manual mode
         print("You've chosen Manual Mode.")
-        usr_csv = use_csv()  # Checks if user has a csv to upload
-        if usr_csv:  # if user have a csv file
-            print(usr_csv)
-            return usr_csv  # return the dictionary from the csv.
-        else:  # if user doesnt have csv file
-            num_of_ppl = num_ppl()  # choose how many ppl to run the test
-            ppl_bds = choose_people(num_of_ppl)
-            print(ppl_bds)
-            return ppl_bds
+        return manual_check()
     elif mode == 3:
+        bold = myStyles.Colors.BOLD
+        end = myStyles.Colors.END
         # semi mode
         print("You've chosen Semi Mode.")
-        print("You will enter manually the number of people you'd like to check, and the machine would check the rest, "
-              "up until 23.")
+        print("You will enter the number of people you'd like to check in total and the number of manually checks;"
+              "\n For the manual checks, you will manually enter their data, in program or from csv file, and the "
+              "program will complete all other people from the total of all people.\n")
+        print("For example: total checks - 50, manual - 10; you will enter manually 10, and the program will complete"
+              "the other 40.\n--------------------------------------------------------")
+        print(f'Enter the {bold}total amount{end} of people you\'d like to check: ')
         num_of_total_ppl = num_ppl()  # number of total people to check
-        num_of_manual_ppl = num_ppl()  # number of manual people to check
-        manual_ppl = choose_people(num_of_manual_ppl)  # dict of manually chosen ppl
+        manual_ppl = manual_check()
+        num_of_manual_ppl = len(manual_ppl.keys())  # number of manual people to check
+        # manual_ppl = choose_people(num_of_manual_ppl)  # dict of manually chosen ppl
         auto_runs = num_of_total_ppl - num_of_manual_ppl  # num of total people minus num of manually entered ppl.
         auto_ppl = ran_ppl(num_of_ppl=auto_runs)  # draw random ppl for the rest of the people (all-manual).
         auto_bds = assign_birthdays(auto_ppl)  # assign bds to auto people; returns dict of ppl and their bds.
@@ -268,10 +272,20 @@ def choose_mode():
         return all_ppl
 
 
-# choose_mode() - check me
+def manual_check() -> dict:
+    usr_csv = use_csv()  # Checks if user has a csv to upload
+    if usr_csv:  # if user have a csv file
+        print(usr_csv)
+        return usr_csv  # return the dictionary from the csv.
+    else:  # if user doesnt have csv file
+        print("Enter the amount of people you'd like to manually enter: \n")
+        num_of_ppl = num_ppl()  # choose how many ppl to run the test
+        ppl_bds = choose_people(num_of_ppl)
+        print(ppl_bds)
+        return ppl_bds
 
 
-def bdd_csv():
+def bdd_csv() -> dict:
     """
     Function checks if header is in csv table and returns a dictionary of people and their bds.
     @return: Dict of name as key and birthday as value from csv file.
@@ -286,7 +300,7 @@ def bdd_csv():
     # run check here for extension
     f_name += ".csv"  # adds csv extension to name of file.
     print("Is there a header in your file?")
-    print("Enter 1 if there is a header.\n Enter 0 if there is no header.\n")
+    print("Enter 1 if there is a header.\nEnter 0 if there is no header.\n")
     hdr = int(input(">>> "))  # hdr = header
     while type(hdr) != int or hdr not in [0, 1]:  # if hdr isn't int or answer isn't 0 or 1.
         hdr = int(input("Please enter a valid answer, between 0 and 1: "))
@@ -311,7 +325,7 @@ def bdd_csv():
     return f_ppl
 
 
-# aharonisbds
+# aharonisbds  - name of my csv file for checks
 # bdd_csv() - check me
 
 def use_csv():
@@ -338,7 +352,7 @@ def main():
     bd_ppl_print(ppl_bds)
     pairs = create_pairs(set(ppl_bds.keys()))
     matching_bds = match_bds(bds=ppl_bds, pairs=pairs)
-    probability(num_of_ppl=len(ppl_bds), precision=10)
+    probability(num_of_ppl=len(ppl_bds), precision=8)
     print("\n\n-----------------------------------")
     successful_pairs(matching_bds=matching_bds, num_of_ppl=len(ppl_bds))
 
