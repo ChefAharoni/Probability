@@ -9,7 +9,14 @@ from datetime import datetime
 CMN_NAMES = list(CommonNames.get_csv_names())  # list of all names in commonNames.csv file; contains 447055 names.
 
 
-# print(people)
+def error_invalid_num() -> None:
+    """
+    Prints error for invalid number.
+    @return: None
+    """
+    print("Error, please enter a valid number: ")
+
+
 def ran_ppl(num_of_ppl: int) -> set:
     """
     The function receives number of people to run, and selects randomly from the master list.
@@ -144,8 +151,10 @@ def successful_pairs(matching_bds: dict, num_of_ppl: int) -> None:
     """
     # function should see how many values are in the successful pairs' dictionary, and justify the statistics.
     num_results = len(matching_bds.keys())
-    if num_results > 0:
-        print(f'I have found {num_results} dates shared from a list of {num_of_ppl} people.')
+    if num_results == 1:
+        print(f'I have found {num_results} shared date from a list of {num_of_ppl} people.')
+    elif num_results > 1:
+        print(f'I have found {num_results} shared dates from a list of {num_of_ppl} people.')
     # add statistics data
 
 
@@ -188,10 +197,10 @@ def num_ppl() -> int:
         try:
             num_of_ppl = int(input(">>> "))
         except ValueError:  # if num entered isn't int
-            print("Error, please enter a valid number: ")
+            error_invalid_num()
             continue
         if num_of_ppl <= 0:  # if num equal/less than 0.
-            print("Error, please enter a valid number: ")
+            error_invalid_num()
             continue
         else:
             break
@@ -210,12 +219,13 @@ def auto_num_ppl() -> int:
         try:  # try to convert to int
             num_of_ppl = int(num_of_ppl)
         except ValueError:  # if num entered isn't int
-            print("Error, please enter a valid number: ")
+            error_invalid_num()
+            ERROR_VALID_NUM
             while True:
                 try:
                     num_of_ppl = int(input(">>> "))
                 except ValueError:  # if num entered isn't int
-                    print("Error, please enter a valid number: ")
+                    error_invalid_num()
                     continue
                 else:
                     break
@@ -271,9 +281,17 @@ def choose_mode() -> dict:
     print('2. Manual Mode - you will choose 23 people and assign their birthdays; csv file can be chosen as well.')
     print('3. Semi Mode - you will choose a number of people, the machine will choose the rest.')
 
-    mode = int(input('>>> '))
-    while type(mode) != int or mode not in [1, 2, 3]:
-        mode = int(input('Error, please choose a number between 1 and 3.\n>>> '))
+    while True:
+        try:  # tries to ask for valid input from user
+            mode = int(input('>>> '))
+        except ValueError:  # if num isn't int
+            error_invalid_num()
+            continue
+        if mode not in [1, 2, 3]:  # if num isn't in answer
+            print("Error, please choose a number from the mode options - a number between 1 and 3.")
+            continue
+        else:
+            break
 
     if mode == 1:  # Auto mode
         print("You've chosen Automatic Mode.\n")
