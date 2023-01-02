@@ -180,11 +180,47 @@ def probability(total_days=365, precision=3, num_of_ppl=23) -> float:
 
 
 def num_ppl() -> int:
-    # num_of_ppl = int(input("Enter the amount of people you'd like to manually enter: "))  # change this
-    num_of_ppl = int(input("»»» "))  # change this
-    while type(num_of_ppl) != int or num_of_ppl <= 0:  # if num entered isn't int or equal/less than 0.
-        num_of_ppl = int(input("Error, please enter a valid number: "))
+    """
+    Checks from user number of people to get checked; returns 23 if user doesn't enter anything.
+    @return: int of number of people.
+    """
+    while True:
+        try:
+            num_of_ppl = int(input(">>> "))
+        except ValueError:  # if num entered isn't int
+            print("Error, please enter a valid number: ")
+            continue
+        if num_of_ppl <= 0:  # if num equal/less than 0.
+            print("Error, please enter a valid number: ")
+            continue
+        else:
+            break
     return num_of_ppl
+
+
+def auto_num_ppl() -> int:
+    """
+    Chooses num of people to run auto check. Translates no response (enter) to 23.
+    @return: number (int) of people to run the check.
+    """
+    num_of_ppl = input(">>> ")
+    if num_of_ppl == "":
+        return 23
+    else:
+        try:  # try to convert to int
+            num_of_ppl = int(num_of_ppl)
+        except ValueError:  # if num entered isn't int
+            print("Error, please enter a valid number: ")
+            while True:
+                try:
+                    num_of_ppl = int(input(">>> "))
+                except ValueError:  # if num entered isn't int
+                    print("Error, please enter a valid number: ")
+                    continue
+                else:
+                    break
+                # type(num_of_ppl) != int or num_of_ppl <= 0:
+        return num_of_ppl
 
 
 def choose_name() -> str:
@@ -200,10 +236,14 @@ def choose_name() -> str:
 
 
 def choose_bdd() -> datetime.date:
+    """
+    Manually input from user for man bd.
+    @return: Formatted date.
+    """
     print("Enter the date of birth in DD MMMM format.")
     print("For example, 02 February")
     bdd = input(">>> ")
-    # write a check for input
+    # write a check for input; check if input is in format. If not - convert it or give error.
     return bdd
 
 
@@ -233,23 +273,23 @@ def choose_mode() -> dict:
 
     mode = int(input('>>> '))
     while type(mode) != int or mode not in [1, 2, 3]:
-        mode = int(input('Error, please choose a number between 1 and 3.'))
+        mode = int(input('Error, please choose a number between 1 and 3.\n>>> '))
 
-    # update later to switch and case
-    if mode == 1:
-        # run Auto mode, call auto function
-        print("You've chosen Automatic Mode.\nRunning check on 23 people.\n---------------------------------------")
-        ppl = ran_ppl(num_of_ppl=23)  # draw a random set of people.
+    if mode == 1:  # Auto mode
+        print("You've chosen Automatic Mode.\n")
+        print("Enter the amount of people you'd like the machine to automatically check, or press enter for checking "
+              "23 people: \n")
+        num_of_ppl = auto_num_ppl()
+        print(f'Running check on {num_of_ppl} people.\n---------------------------------------')
+        ppl = ran_ppl(num_of_ppl=num_of_ppl)  # draw a random set of people.
         bds = assign_birthdays(ppl)  # assign to rand ppl random birthdays.
         return bds  # run the auto function with 23 people.
-    elif mode == 2:
-        # Manual mode
+    elif mode == 2:  # Manual mode
         print("You've chosen Manual Mode.")
         return manual_check()
-    elif mode == 3:
+    elif mode == 3:  # Semi mode
         bold = myStyles.Colors.BOLD
         end = myStyles.Colors.END
-        # semi mode
         print("You've chosen Semi Mode.")
         print("You will enter the number of people you'd like to check in total and the number of manually checks;"
               "\n For the manual checks, you will manually enter their data, in program or from csv file, and the "
@@ -260,7 +300,6 @@ def choose_mode() -> dict:
         num_of_total_ppl = num_ppl()  # number of total people to check
         manual_ppl = manual_check()
         num_of_manual_ppl = len(manual_ppl.keys())  # number of manual people to check
-        # manual_ppl = choose_people(num_of_manual_ppl)  # dict of manually chosen ppl
         auto_runs = num_of_total_ppl - num_of_manual_ppl  # num of total people minus num of manually entered ppl.
         auto_ppl = ran_ppl(num_of_ppl=auto_runs)  # draw random ppl for the rest of the people (all-manual).
         auto_bds = assign_birthdays(auto_ppl)  # assign bds to auto people; returns dict of ppl and their bds.
@@ -270,6 +309,10 @@ def choose_mode() -> dict:
 
 
 def manual_check() -> dict:
+    """
+    If csv file is wished to be uploaded, returns data from csv; else runs choose people for n times (num_of_ppl).
+    @return: Dict of people and their bds.
+    """
     usr_csv = use_csv()  # Checks if user has a csv to upload
     if usr_csv:  # if user have a csv file
         print(usr_csv)
