@@ -9,9 +9,6 @@ from datetime import datetime
 CMN_NAMES = list(CommonNames.get_csv_names())  # list of all names in commonNames.csv file; contains 447055 names.
 
 
-# people = [i for i in range(23)]  # change later the people to random names
-
-
 # print(people)
 def ran_ppl(num_of_ppl: int) -> set:
     """
@@ -325,9 +322,6 @@ def bdd_csv() -> dict:
     return f_ppl
 
 
-# aharonisbds  - name of my csv file for checks
-# bdd_csv() - check me
-
 def use_csv():
     """
     Function to check if user wants to use a csv file for bds checks.
@@ -345,16 +339,19 @@ def use_csv():
 
 
 def main():
-    # create an if statement to check if user wants to enter manually people with dates or let the machine run auto.
-    # num_of_ppl = num_ppl()
     ppl_bds = choose_mode()  # dict of names and birthdays
-    # bds = assign_birthdays(ppl)
     bd_ppl_print(ppl_bds)
     pairs = create_pairs(set(ppl_bds.keys()))
     matching_bds = match_bds(bds=ppl_bds, pairs=pairs)
     probability(num_of_ppl=len(ppl_bds), precision=8)
     print("\n\n-----------------------------------")
     successful_pairs(matching_bds=matching_bds, num_of_ppl=len(ppl_bds))
+
+    # aharonisbds  - name of my csv file for checks
+    # write a function that writes some of the data to a csv file.
+    # clean csv file data; if date is entered in wrong format.
+    # complete flow chart
+    # complete documentation
 
 
 if __name__ == "__main__":
