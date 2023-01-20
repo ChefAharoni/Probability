@@ -7,6 +7,7 @@ from Sources import myStyles
 from datetime import datetime
 
 CMN_NAMES = list(CommonNames.get_csv_names())  # list of all names in commonNames.csv file; contains 447055 names.
+DATE_FORMAT = "%d %B"
 
 
 def error_invalid_num() -> None:
@@ -60,7 +61,7 @@ def assign_birthdays(ppl: set) -> dict:
         else:  # January, March, May
             day = random.randint(1, 31)
         bd = datetime.date(1600, month, day)  # we assume its a leap year for ease of calculation.
-        bd_formatted = datetime.date.strftime(bd, "%d %B")  # formats the date to words; outputs str
+        bd_formatted = datetime.date.strftime(bd, DATE_FORMAT)  # formats the date to words; outputs str
         # print(bd_formatted)
         # print(type(bd_formatted))
         birthdays[dude] = bd_formatted
@@ -79,7 +80,7 @@ def bd_ppl_print(bds: dict) -> None:
     listed_bds = list()
     for key, value in bds.items():
         listed_bds.append({"Name": key, "DOB": value})  # converting the dict to list of dict for ease of sorting.
-    listed_bds.sort(key=lambda x: datetime.datetime.strptime(x['DOB'], '%d %B'))  # sorts the list of dicts by date.
+    listed_bds.sort(key=lambda x: datetime.datetime.strptime(x['DOB'], DATE_FORMAT))  # sorts the list of dicts by date.
     print(listed_bds)
     # receives the dict from assign_birthdays func and prints the bds in a tabular, clean format.
     print(myStyles.Colors.BOLD + myStyles.Colors.BLUE + f'{"Human Name":<20} |\t {"Birthday":<20} {"|":<20}' +
@@ -158,7 +159,7 @@ def successful_pairs(matching_bds: dict, num_of_ppl: int) -> None:
     # add statistics data
 
 
-def probability(total_days=365, precision=3, num_of_ppl=23) -> float:
+def probability(total_days=365, precision=3, num_of_ppl=23) -> float or None:
     """
     Function calculates the probability of finding a pair of two people with a birthday.
     @param total_days: Total days in a year, could be a constant, but kept anyway for other future possible options.
@@ -252,9 +253,24 @@ def choose_bdd() -> datetime.date:
     """
     print("Enter the date of birth in DD MMMM format.")
     print("For example, 02 February")
-    bdd = input(">>> ")
+    bdd = input(">>> ")  # bdd = birthday date
     # write a check for input; check if input is in format. If not - convert it or give error.
-    return bdd
+    bd_formatted = convert_str_to_date(bdd=bdd)  # convert inout to date time format
+    return bd_formatted
+
+
+def convert_str_to_date(bdd: str) -> str:
+    """
+    Receives birthdate as str and converts to datetime format.
+    @param bdd: Birthdate as str
+    @return: Str in Date format.
+    """
+    import datetime
+    bd = datetime.datetime.strptime(bdd, DATE_FORMAT)  # convert input to datetime format
+    # the datetime.strptime() class method creates a datetime object from a string representing a date and time
+    # and a corresponding format string.
+    bd_formatted = datetime.date.strftime(bd, DATE_FORMAT)  # formats the date to words; outputs str
+    return bd_formatted
 
 
 def choose_people(num_of_ppl: int) -> dict:
@@ -368,16 +384,16 @@ def bdd_csv() -> dict:
         f_ppl = dict()
         for row in f_reader:
             name = row[0].lower().title()  # converts the name to lowercase and first letter uppercase.
-            # print(row[0])
+            bdd = convert_str_to_date(row[1])
             if row[0] == '':  # if name in csv is empty
                 continue
             if hdr == 1 and line == 0:  # if the first line is header
                 # print(f'Header: {", ".join(row)}')  # if header is needed to be printed.
                 line += 1  # ignore the header by adding 1 to line count.
             elif hdr == 1 and line != 0:
-                f_ppl[name] = row[1]
+                f_ppl[name] = bdd
             else:  # if there is no header
-                f_ppl[name] = row[1]  # adds name as key and bdd as value to dict
+                f_ppl[name] = bdd  # adds name as key and bdd as value to dict
                 line += 1
 
     return f_ppl
@@ -416,4 +432,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    convert_str_to_date("29 October")
