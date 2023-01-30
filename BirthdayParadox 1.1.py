@@ -432,5 +432,5 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
-    convert_str_to_date("29 October")
+    main()
+    # convert_str_to_date("29 October")
